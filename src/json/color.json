@@ -1,0 +1,173 @@
+[{
+    "name": "colorPrimary",
+    "color": "#D53A47"
+},
+{
+    "name": "colorPrimaryDark",
+    "color": "#D53A47"
+},
+{
+    "name": "colorAccent",
+    "color": "#D53A47"
+},
+{
+    "name": "background",
+    "color": "#2B292B"
+},
+{
+    "name": "background800",
+    "color": "#424242"
+},
+{
+    "name": "background900",
+    "color": "#212121"
+},
+{
+    "name": "bug",
+    "color": "#179A55"
+},
+{
+    "name": "dark",
+    "color": "#040706"
+},
+{
+    "name": "dragon",
+    "color": "#378A94"
+},
+{
+    "name": "white_12",
+    "color": "#fafafa"
+},
+{
+    "name": "white_56",
+    "color": "#8effffff"
+},
+{
+    "name": "white_70",
+    "color": "#b2ffffff"
+},
+{
+    "name": "white_87",
+    "color": "#ddffffff"
+},
+{
+    "name": "white_93",
+    "color": "#edf8f8f8"
+},
+{
+    "name": "white",
+    "color": "#ffffff"
+},
+{
+    "name": "gray_21",
+    "color": "#B1A5A5"
+},
+{
+    "name": "electric",
+    "color": "#E0E64B"
+},
+{
+    "name": "fairy",
+    "color": "#9E1A44"
+},
+{
+    "name": "black",
+    "color": "#000000"
+},
+{
+    "name": "black_70",
+    "color": "#B3000000"
+},
+{
+    "name": "skyBlue",
+    "color": "#57A8D8"
+},
+{
+    "name": "yellow",
+    "color": "#FBC02D"
+},
+{
+    "name": "fire",
+    "color": "#B22328"
+},
+{
+    "name": "flying",
+    "color": "#90B1C5"
+},
+{
+    "name": "ghost",
+    "color": "#363069"
+},
+{
+    "name": "ice",
+    "color": "#7ECFF2"
+},
+{
+    "name": "poison",
+    "color": "#642785"
+},
+{
+    "name": "psychic",
+    "color": "#AC296B"
+},
+{
+    "name": "rock",
+    "color": "#4B190E"
+},
+{
+    "name": "steel",
+    "color": "#5C756D"
+},
+{
+    "name": "water",
+    "color": "#2648DC"
+},
+{
+    "name": "md_yellow_100",
+    "color": "#FFD600"
+},
+{
+    "name": "md_yellow_200",
+    "color": "#FBC02D"
+},
+{
+    "name": "md_amber_700",
+    "color": "#FFA000"
+},
+{
+    "name": "md_orange_100",
+    "color": "#FFA726"
+},
+{
+    "name": "md_orange_200",
+    "color": "#FF6D00"
+},
+{
+    "name": "md_green_100",
+    "color": "#81C784"
+},
+{
+    "name": "md_green_200",
+    "color": "#388E3C"
+},
+{
+    "name": "fighting",
+    "color": "#9F422A"
+},
+{
+    "name": "grass",
+    "color": "#007C42"
+},
+{
+    "name": "ground",
+    "color": "#AD7235"
+},
+{
+    "name": "md_blue_100",
+    "color": "#81D4fA"
+},
+{
+    "name": "md_blue_200",
+    "color": "#0091EA"
+}
+]

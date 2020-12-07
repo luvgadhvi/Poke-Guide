@@ -1,21 +1,40 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import HomeScreen from './src/screen/HomeScreen';
+import BoilerScreen from './src/screen/BoilerPoint';
+import PokeScreen from './src/screen/PokeScreen'
+const Stack = createStackNavigator();
 
-export default function App() {
+const Screens = {
+  Home: HomeScreen,
+  Boiler: BoilerScreen,
+  Pokemon: PokeScreen
+};
+
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer >
+      <Stack.Navigator
+        screenOptions={{
+          title: 'Pokedex',
+          headerStyle: {
+            backgroundColor: '#D53A47',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      >
+        {Object.entries({
+          ...Screens,
+        }).map(([name, component]) => (
+          <Stack.Screen key={(name) => name} name={name} component={component} />
+        ))}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
