@@ -23,7 +23,7 @@ const PokeScreen = ({ route, navigation }) => {
             headerRight: () => (
                 <Text style={styles.headerRight}>#{details.pokemon.id}</Text>
             )
-        });  
+        });
     });
     return (
         <View style={styles.container}>

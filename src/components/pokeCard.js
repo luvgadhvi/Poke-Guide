@@ -1,55 +1,72 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import { Text, StyleSheet, View, Image, TouchableOpacity, ImageBackground } from "react-native";
 import PokeList from "../api/pokeList"
-import * as Color from '../json/color.json'
-import Spinner from 'react-native-loading-spinner-overlay';
-const ColorType = Color
+import backgroundColourHelper from "../utils/backgroundHelper";
+import { connect } from 'react-redux';
 
-const PokeCard = ({ pokemon, navigation }) => {
+const PokeCard = ({ pokemon, navigation, values }) => {
     const [pokeDetails, setPokeDetails] = useState(null);
     const [image, setImage] = useState(null);
-    const [bgColor, setBgColor] = useState(null);
-    const setBackGround = (bgColor) => {
-        const bg = Object.values(ColorType).filter((color) => color.name == bgColor)
-        const bg_Color = bg[0] ? bg[0]['color'] : '#81D4fA';
-        setBgColor(bg_Color)
-    }
+    const [backgroundColor, setBackgroundColor] = useState(null);
+    const [error, setError] = useState(null);
+    const [types, setTypes] = useState('');
 
     const getPokemonDetails = async (name) => {
         try {
             const response = await PokeList.get(`/${name}`);
             setPokeDetails(response.data);
-            setImage(response.data.sprites.other["official-artwork"]["front_default"]);
-            setBackGround(response.data.types[0].type.name)
+            await setImage(response.data.sprites.other["official-artwork"]["front_default"]);
+            setBackgroundColor(backgroundColourHelper(response.data.types[0].type.name));
+            setTypes(JSON.stringify(response.data.types));
         } catch (e) {
-            console.log(e);
+            setError(e);
         }
     }
     useEffect(() => {
-        getPokemonDetails(pokemon.name)
+        let isMounted = true;
+        if (isMounted) {
+            getPokemonDetails(pokemon.name)
+        }
+        return () => {
+            // clean up
+            isMounted = false;
+        }
     }, [])
+    if (error) {
+        return (
+            <TouchableOpacity
+                style={[styles.container, { backgroundColor: backgroundColor }]}
+            >
+                <Text style={styles.pokeName}>{pokemon.name}</Text>
+            </TouchableOpacity>
 
-    return (
-        <TouchableOpacity onPress={() => {
-            navigation.navigate('Pokemon', {
-                details: {
-                    background: bgColor,
-                    pokemon: pokeDetails,
-                    name: pokemon.name
-                }
-            })
+        );
+    }
+    if (pokemon.name.includes(values.searchValue) && (types.includes(values.type) || values.type === 'All')) {
+        return (
+            <TouchableOpacity onPress={() => {
+                navigation.navigate('Pokemon', {
+                    details: {
+                        background: backgroundColor,
+                        pokemon: pokeDetails,
+                        name: pokemon.name
+                    }
+                })
 
-        }}
-            style={[styles.container, { backgroundColor: bgColor }]}
-        >
-            <Image style={styles.image}
-                source={{ uri: image }}
-                PlaceholderContent={<Spinner />}
-            />
-            <Text style={styles.pokeName}>{pokemon.name}</Text>
-        </TouchableOpacity>
+            }}
+                style={[styles.container, { backgroundColor: backgroundColor }]}
+            >
+                <Image style={styles.image}
+                    source={{ uri: image }}
+                />
+                <Text style={styles.pokeName}>{pokemon.name}</Text>
+            </TouchableOpacity>
 
-    );
+        );
+    } else {
+        return <View></View>;
+    }
+
 
 }
 const styles = StyleSheet.create({
@@ -68,16 +85,31 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
         color: '#fafafa',
-        marginBottom: 15,
+        marginBottom: 10,
         textAlign: 'center'
     },
     image: {
         width: "90%",
         height: "90%",
         resizeMode: 'cover',
+    },
+    noCard: {
+
     }
 });
 
+const mapStateToProps = (state) => {
+    return {
+        values: state.filterValue.values
+    }
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        filterValue: (value) => {
+            dispatch(dropdownValue(value))
+        }
+    }
+}
 
 
-export default PokeCard;
+export default (connect(mapStateToProps, mapDispatchToProps)(PokeCard));
