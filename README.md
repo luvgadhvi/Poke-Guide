@@ -38,7 +38,7 @@ Following are the screenshots of different pages within the mobile app.
   <img src="https://github.com/luvgadhvi/Poke-Guide/blob/master/screenshots/search1.jpg" width="300" >
   </p>
   
-  * **Pokemon Information**<br/>
+* **Pokemon Information**<br/>
   <p align="center">
   <img src="https://github.com/luvgadhvi/Poke-Guide/blob/master/screenshots/pokeinfochar.jpg" width="300" >
   <img src="https://github.com/luvgadhvi/Poke-Guide/blob/master/screenshots/charbasestars.jpg" width="300" >
