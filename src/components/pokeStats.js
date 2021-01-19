@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Text, StyleSheet, View, Image, TouchableOpacity, ImageBackground } from "react-native";
-import PokeList from "../api/pokeList"
+import { Text, StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import backgroundColourHelper from "../utils/backgroundHelper";
 import { connect } from 'react-redux';
 
-const PokeStats = ({ pokemon,navigation }) => {
+//Function to render pokemon card which contains pokemon name and type background.
+const PokeStats = ({ pokemon, navigation }) => {
     const [image, setImage] = useState(null);
     const [backgroundColor, setBackgroundColor] = useState(null);
-    const [types, setTypes] = useState('');
+    //React hook for data to pass during pokemon card load.
     useEffect(() => {
-        setImage(pokemon.sprites.other["official-artwork"]["front_default"]);
-        setBackgroundColor(backgroundColourHelper(pokemon.types[0].type.name));
+        setImage(pokemon.Sprites[0]);
+        setBackgroundColor(backgroundColourHelper(pokemon.Types[0]));
         return () => {
 
         }
@@ -21,7 +21,7 @@ const PokeStats = ({ pokemon,navigation }) => {
                 details: {
                     background: backgroundColor,
                     pokemon: pokemon,
-                    name: pokemon.name
+                    name: pokemon.Name
                 }
             })
 
@@ -31,7 +31,7 @@ const PokeStats = ({ pokemon,navigation }) => {
             <Image style={styles.image}
                 source={{ uri: image }}
             />
-            <Text style={styles.pokeName}>{pokemon.name}</Text>
+            <Text style={styles.pokeName}>{pokemon.Name}</Text>
         </TouchableOpacity>
     )
 }
@@ -64,18 +64,6 @@ const styles = StyleSheet.create({
     }
 });
 
-const mapStateToProps = (state) => {
-    return {
-        values: state.filterValue.values
-    }
-}
-const mapDispatchToProps = (dispatch) => {
-    return {
-        filterValue: (value) => {
-            dispatch(dropdownValue(value))
-        }
-    }
-}
 
 
-export default (connect(mapStateToProps, mapDispatchToProps)(PokeStats));
+export default PokeStats;

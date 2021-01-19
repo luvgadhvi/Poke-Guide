@@ -1,3 +1,4 @@
+//Lov For Pokemon type related Information. 
 const TypeList = [
     {
         label: "All",
@@ -103,6 +104,6 @@ const TypeList = [
         label: "Shadow",
         "url": "https://pokeapi.co/api/v2/type/10002/",
         value: "shadow"
-    }  
+    }
 ]
 export default TypeList;

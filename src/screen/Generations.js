@@ -1,99 +1,76 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { StyleSheet, View, Text, FlatList, TextInput, SafeAreaView } from "react-native";
-import PokeGeneration from '../api/pokeRegion'
-// import PokeCard from '../components/pokeCard'
-import PokeStats from '../components/pokeStats'
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { StyleSheet, View, Text, FlatList, SafeAreaView, LogBox } from "react-native";
+import PokeGenerationApi from "../api/pokeNodeApi";
+import PokeStats from '../components/pokeStats';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { connect } from 'react-redux';
-import { dropdownValue } from '../reducers/actions';
-import TypeList from '../utils/TypesList'
-import PokeList from "../api/pokeList";
-import { Picker } from '@react-native-picker/picker';
+import TypeList from '../utils/TypesList';
+import ActionButton from 'react-native-action-button';
+import Icon from 'react-native-vector-icons/Feather';
+import backgroundColourHelper from "../utils/backgroundHelper";
+import { renderers, Menu, MenuActions, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
+const { SlideInMenu } = renderers;
 
-const GenerationScreen = ({ navigation, route, filterValues, filterDispatch }) => {
+const GenerationScreen = ({ navigation, route }) => {
+    //Retrieving generation related metadata. 
     const region = route.params.region;
     const [pokeRegion, setPokeRegion] = useState([]);
     const [filterData, setFilterData] = useState([]);
-    const [didMount, setDidMount] = useState(false);
     const [refresh, setRefresh] = useState(false);
-    const [pokeSearch, setPokeSearch] = useState('');
     const [type, setType] = useState('All');
-
+    const actionEl = useRef('');//Action button Element reference
+    const menuEl = useRef('');//Popover Menu Reference.
+    //Following Function will retrieve pokemon by their generation number.
     const getPokeByRegion = async (generation) => {
         try {
-            console.log('--GetPokemon--');
-            const response = await PokeGeneration.get(`/${generation}`);
-            for (let i = 0; i < response.data.pokemon_entries.length; i++) {
-                try {
-                    const pokeResponse = await PokeList.get(`/${response.data.pokemon_entries[i].pokemon_species.name}`);
-                    setPokeRegion(prevArray => [...prevArray, pokeResponse.data])
-                    setFilterData(prevArray => [...prevArray, pokeResponse.data])
-
-                } catch (err) {
-                    console.log('Err', err)
-                }
-            }
-            console.log('Count', response.data.pokemon_entries.length)
+            console.log('--GetPokemon--', generation);
+            const response = await PokeGenerationApi.get(`/${generation}`);
+            console.log(response.data.count)
+            setPokeRegion(response.data.PokeByGen);
+            setFilterData(response.data.PokeByGen);
             setRefresh(false)
         } catch (e) {
             // setError(e)
         }
     }
+    //Function to filter pokemon by their type.
+    const filterList = (type) => {
+        console.log(type);
+        if (type === 'All') {
+            setFilterData([...pokeRegion])
+        }
+        else {
+            const newData = pokeRegion.filter(item => {
+                return (JSON.stringify(item.Types).includes(type) || type === 'All')
+            })
+            setFilterData([...newData])
+        }
+    }
+    //React Hook for initial page load.
     useEffect(() => {
-        setDidMount(true);
+        LogBox.ignoreLogs(['Animated: `useNativeDriver` was not specified.']);
         setRefresh(true);
         navigation.setOptions({
             title: region.region
         });
-        console.log('value', region.value)
-        getPokeByRegion(region.value)
+        getPokeByRegion(region.genByNumber)
         return () => {
             console.log('Umount');
             setPokeRegion([]);
-            setDidMount(false);
         }
-    }, [region.value]);
-    const renderPokeCard = ({ item }) => <PokeStats key={item.name} pokemon={item} navigation={navigation} />;
+    }, [region.genByNumber]);
+    //Function to render pokemon card by passing pokemon information.
+    const renderPokeCard = ({ item }) => <PokeStats key={item.PokeId} pokemon={item} navigation={navigation} />;
     const memoizedValue = useMemo(() => renderPokeCard, [filterData]);
-    const keyExtractor = (item) => item.name;
-    const filterList = (text, type) => {
-        console.log('---', text, type);
-        if (text === '' && type === 'All') {
-            setFilterData([...pokeRegion])
-        } else {
-            const newData = pokeRegion.filter(item => {
-                return (item.name.includes(text) && (JSON.stringify(item.types).includes(type) || type === 'All'))
-            })
-            setFilterData([...newData])
-        }
-    }
-    const searchFilter = (text) => {
-        console.log('Text', text)
-        if (pokeSearch !== '') {
-            const newData = filterData.filter(item => {
-                return item.name.includes(text)
-                // return JSON.stringify(item.types).includes(text)
-            })
-            for (let i = 0; i < newData.length; i++) {
-                console.log('newData--', newData[i].name)
-            }
-            setFilterData([...newData])
-        } else if (pokeSearch == '') {
-            setFilterData([...pokeRegion])
-        }
-    }
-    const typeFilter = (type) => {
-        if (type === 'All') {
-            setFilterData([...pokeRegion])
-            setPokeSearch('')
-        } else {
-            const newData = filterData.filter(item => {
-                return JSON.stringify(item.types).includes(type)
-            })
-            setFilterData([...newData])
-        }
-    }
-
+    //Providing each element with unique key.
+    const keyExtractor = (item) => item.Name;
+    //FUnction to render filter Menu
+    const renderMenuOption = ({ item }) => (
+        <MenuOption key={item.label} value={item.value} style={{ backgroundColor: backgroundColourHelper(item.value) }}>
+            <View style={styles.optionView}>
+                <Text style={styles.optionLabel}>{item.label}</Text>
+            </View>
+        </MenuOption>
+    )
     return (
         <SafeAreaView style={{ flex: 1 }}>
             {refresh ? <Spinner
@@ -102,40 +79,33 @@ const GenerationScreen = ({ navigation, route, filterValues, filterDispatch }) =
                 textStyle={styles.spinnerTextStyle}
             /> : null
             }
-            <View style={styles.container}>
-                <View style={styles.filterView}>
-                    <TextInput
-                        maxLength={20}
-                        placeholder="Search Pokemon"
-                        value={pokeSearch}
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        placeholderTextColor="black"
-                        onChangeText={(text) => {
-                            setPokeSearch(text)
-                            filterList(text, type)
-                        }}
-                        onSubmitEditing={() => {
 
-                        }}
-                        style={styles.selected}
-                    />
-                    <Picker
-                        selectedValue={type}
-                        style={styles.selected}
-                        onValueChange={(itemValue, itemIndex) => {
-                            setType(itemValue)
-                            filterList(pokeSearch, itemValue)
-                        }
-                        }>
-                        {(TypeList).map((type, index) =>
-                            <Picker.Item key={type.label} label={type.label} value={type.value} />
-                        )
-                        }
-                    </Picker>
-                </View>
+            <Menu name="type" renderer={SlideInMenu} ref={menuEl} backHandler={true} onSelect={value => {
+                setType(value)
+                filterList(value)
+            }}
+                onOpen={() => {
+                    actionEl.current.reset()
+                }}
+            >
+                <MenuTrigger />
+                <MenuOptions customStyles={optionsStyles}>
+                    <View>
+                        <Text style={styles.filterText}>Select Type</Text>
+                        <FlatList
+                            data={TypeList}
+                            numColumns={2}
+                            renderItem={renderMenuOption}
+                            keyExtractor={(item) => item.label}
+                        />
+                    </View>
+
+                </MenuOptions>
+            </Menu>
+            <View style={styles.container}>
                 <FlatList
                     data={filterData}
+                    // ListHeaderComponent={filterHeader}
                     numColumns={2}
                     renderItem={memoizedValue}
                     keyExtractor={keyExtractor}
@@ -143,6 +113,19 @@ const GenerationScreen = ({ navigation, route, filterValues, filterDispatch }) =
                     maxToRenderPerBatch={10}
                     windowSize={10}
                 />
+                <ActionButton buttonColor="rgba(231,76,60,1)" ref={actionEl}>
+                    <ActionButton.Item buttonColor='#9b59b6' title="Type"
+                        textContainerStyle={{ height: 30 }}
+                        textStyle={{ fontSize: 18 }}
+                        onPress={() => {
+                            menuEl.current.open()
+                        }}>
+                        <Icon name="filter" style={[styles.actionButtonIcon]} />
+                    </ActionButton.Item>
+                    <ActionButton.Item buttonColor='#9b59b6' onPress={() => navigation.navigate('Search')}>
+                        <Icon name="search" style={styles.actionButtonIcon} />
+                    </ActionButton.Item>
+                </ActionButton>
             </View>
         </SafeAreaView>
     );
@@ -154,45 +137,56 @@ const styles = StyleSheet.create({
         backgroundColor: '#424242',
         padding: '2%'
     },
-    filterView: {
-        flexDirection: 'row',
-        paddingBottom: 10
+    actionButtonIcon: {
+        fontSize: 25,
+        height: 22,
+        color: 'white',
     },
-    selected: {
-        width: 200,
-        height: 40,
-        overflow: 'hidden',
+    optionView: {
+
+    },
+    filterText: {
+        fontSize: 20,
         textAlign: 'center',
-        fontSize: 16,
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: 'black',
-        backgroundColor: '#9a9e96',
+        fontWeight: 'bold',
         color: 'black',
-        // color: 'white',
+        paddingBottom: 5,
+
     },
-    dropdown: {
-        width: 200,
-        fontSize: 16,
-        height: 45,
-        borderRadius: 5,
-        borderWidth: 2,
-        borderColor: 'black',
-        backgroundColor: '#9a9e96'
+    optionLabel: {
+        color: 'white',
+        padding: 5,
+        textAlign: 'center'
+    },
+    noPoke: {
+        fontSize: 20,
+        textAlign: 'center',
+        fontWeight: 'bold',
+        color: 'white',
+        marginVertical: 15,
+    },
+    actionView: {
+        flexDirection: 'row'
     }
 });
-const mapStateToProps = (state) => {
-    return {
-        filterValues: state.filterValue.values
+const optionsStyles = {
+    optionsContainer: {
+        // backgroundColor: '#d1cbcb',
+        padding: 15
+    },
+    optionWrapper: {
+        width: '48%',
+        height: 40,
+        borderRadius: 15,
+        borderWidth: 2,
+        borderColor: 'black',
+        margin: 1,
+        marginBottom: 5,
+        overflow: 'hidden'
+    },
+    optionTouchable: {
+        activeOpacity: 70,
     }
-}
-const mapDispatchToProps = (dispatch) => {
-    return {
-        filterDispatch: (value) => {
-            dispatch(dropdownValue(value))
-        }
-    }
-}
+};
 
-
-export default connect(mapStateToProps, mapDispatchToProps)(GenerationScreen);
+export default GenerationScreen;

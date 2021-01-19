@@ -1,27 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { Text, StyleSheet, View, Image } from "react-native";
-import TypeBoxComponent from "../components/typeBox";
-import BodyStatsComponent from '../components/bodyStats';
-import AbilitiesComponent from '../components/abilitiesComponent'
+import { Text, StyleSheet, View, Image, Dimensions } from "react-native";
 import Spinner from 'react-native-loading-spinner-overlay';
+import PokeTabComp from '../components/pokeTab';
 
+//This Screen Will Contain detail information of particular pokemon.
 const PokeScreen = ({ route, navigation }) => {
     const details = route.params['details'];
     const [bgColor, setBgColor] = useState(null);
     const [Pokemon, setPokemon] = useState({});
     const [image, setImage] = useState(null);
     const [refresh, setRefresh] = useState(false)
+    //React Hooks for Page Load
     useEffect(() => {
         setRefresh(false);
         setBgColor(details.background);
         setPokemon(details.pokemon)
-        setImage(details.pokemon.sprites.other["official-artwork"]["front_default"])
+        setImage(details.pokemon.Sprites[0])
         navigation.setOptions({
+            title:details.pokemon.Name,
             headerStyle: {
                 backgroundColor: details.background
             },
             headerRight: () => (
-                <Text style={styles.headerRight}>#{details.pokemon.id}</Text>
+                <Text style={styles.headerRight}>#{details.pokemon.PokeId}</Text>
             )
         });
     });
@@ -41,17 +42,9 @@ const PokeScreen = ({ route, navigation }) => {
                     PlaceholderContent={<Spinner />}
                 />
             </View>
-            <View style={styles.textContainer}>
-                <Text style={styles.pokeName}>{Pokemon.name}</Text>
-                <TypeBoxComponent type={details.pokemon.types} />
-                <BodyStatsComponent stats={{
-                    height: details.pokemon.height,
-                    weight: details.pokemon.weight
-                }} />
-                <Text style={styles.pokeName}>Abilities:</Text>
-                <AbilitiesComponent abilities={details.pokemon.abilities} />
+            <View style={styles.tapContainer}>
+                <PokeTabComp route={route} navigation={navigation} pokemon={Pokemon} />
             </View>
-
         </View>);
 }
 
@@ -69,15 +62,19 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         flex: 1,
-        borderBottomLeftRadius: 50,
-        borderBottomRightRadius: 50,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
         overflow: 'hidden'
     },
     textContainer: {
-        flex: 2
+        flex: 1
     },
     statsContainer: {
         flex: 1
+    },
+    tapContainer: {
+        marginTop: 10,
+        flex: 2
     },
     image: {
         height: '100%',

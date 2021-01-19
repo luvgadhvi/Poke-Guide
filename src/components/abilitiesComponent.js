@@ -1,8 +1,7 @@
 import React from "react";
 import { Text, StyleSheet, View, FlatList } from "react-native";
-
+//This Component will render pokemon ability list.
 const AbilitiesComponent = ({ abilities }) => {
-    // console.log(abilities)
     return (
         <View style={styles.container} >
             <FlatList
@@ -13,11 +12,11 @@ const AbilitiesComponent = ({ abilities }) => {
                         <Text key={item.ability}
                             style={styles.text}
                         >
-                            {item.ability['name']}
+                            {item}
                         </Text>
                     );
                 }}
-                keyExtractor={(abilities) => abilities.ability['name']}
+                keyExtractor={(abilities) => abilities}
             />
         </View>);
 }

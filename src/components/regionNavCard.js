@@ -1,66 +1,65 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Text, StyleSheet, View, TouchableOpacity, Image } from "react-native";
 
-
+//This Function will render pokemon generation list component present in home page
 const RegionNavCardComponent = ({ region, navigation }) => {
 
+    //Function to navigate to poke screen page for getting list of pokemon by their region.
     const navigateTo = () => {
-        if (region.value == 'all') {
-            navigation.navigate('AllPokemon')
-        } else {
-            navigation.navigate('Generation', {
-                region:region
-            })
-        }
+        navigation.navigate('Generation', {
+            region: region
+        })
     }
 
     return (
-        <TouchableOpacity
-            onPress={navigateTo}
-        >
-            <View style={styles.allContainer}>
-                <Image style={styles.image}
-                    source={region.path}
-                />
-                <View style={styles.insideText}>
-                    <Text style={styles.imageText}>Pokémon:{region.label}</Text>
+        <View style={styles.allContainer}>
+            <TouchableOpacity
+                onPress={navigateTo}
+            >
+                <View style={styles.textView}>
+                    <Text style={styles.text}>{region.label}</Text>
                 </View>
-            </View>
-        </TouchableOpacity>
+                <View style={[styles.imageContainer]}>
+                    <Image style={styles.image}
+                        source={region.path}
+                    />
+                </View>
+            </TouchableOpacity>
+        </View>
+
     );
 
 }
 
 const styles = StyleSheet.create({
     allContainer: {
-        marginVertical: 5,
-        width: '100%',
-        height: 250,
-        borderWidth: 2,
-        borderColor: 'black',
-        flexDirection: 'column',
-        borderRadius: 10
+        width: '48%',
+        height: 40,
+        aspectRatio: 1,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: 'white',
+        paddingVertical: 5,
+        margin: '1%',
+        backgroundColor: '#FDFDFD',
+        overflow: 'hidden'
+    },
+    textView: {
+    },
+    text: {
+        textAlign: 'center',
+        fontSize: 16,
+        fontWeight: 'bold'
+    },
+    imageContainer: {
+        alignItems: 'center',
+        overflow: 'hidden',
+
     },
     image: {
-        width: "100%",
+        width: '100%',
         height: '100%',
-        backgroundColor: 'white',
-        resizeMode: "stretch",
-    },
-    insideText: {
-        width: "100%",
-        height: 50,
-        position: 'absolute',
-        bottom: 0,
-        backgroundColor: 'black',
-        opacity: 0.8
-    },
-    imageText: {
-        padding: 10,
-        fontSize: 18,
-        overflow: 'visible',
-        fontWeight: "bold",
-        color: 'white',
+        resizeMode: 'contain'
     }
 });
 

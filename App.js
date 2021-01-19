@@ -4,15 +4,16 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './src/screen/HomeScreen';
 import PokeScreen from './src/screen/PokeScreen';
 import GenerationScreen from './src/screen/Generations'
-import AllPokeScreen from './src/screen/AllPokemon'
+import SearchScreen from "./src/screen/SearchScreen";
 import rootReducer from './src/reducers';
+import { MenuProvider } from 'react-native-popup-menu';
 import { Provider } from 'react-redux';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStore } from 'redux';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-
+//JSx Code For StackKNavigator.
 function HomeStack() {
   return (
     <Stack.Navigator
@@ -23,6 +24,7 @@ function HomeStack() {
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
+          textTransform: 'capitalize',
           fontWeight: 'bold',
         }
       }}
@@ -31,14 +33,14 @@ function HomeStack() {
       />
       <Stack.Screen key='Pokemon' name='Pokemon' component={PokeScreen}
       />
-      <Stack.Screen key='AllPokemon' name='AllPokemon' component={AllPokeScreen}
-      />
       <Stack.Screen key='Generation' name='Generation' component={GenerationScreen}
+      />
+      <Stack.Screen key='Search' name='Search' component={SearchScreen}
       />
     </Stack.Navigator>
   );
 }
-
+//Drawer Navigator Code. 
 function HomeDrawer() {
   return (
     <Drawer.Navigator
@@ -61,9 +63,11 @@ const store = createStore(rootReducer);
 const App = () => {
   return (
     <Provider store={store}>
-      <NavigationContainer theme={{ colors: { background: '#424242' } }}>
-        <HomeDrawer />
-      </NavigationContainer>
+      <MenuProvider>
+        <NavigationContainer theme={{ colors: { background: '#424242' } }}>
+          <HomeDrawer />
+        </NavigationContainer>
+      </MenuProvider>
     </Provider>
   );
 };

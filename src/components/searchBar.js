@@ -1,13 +1,13 @@
 import React from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
-//Function to render menu icon in left side header on home page.
-const ToggleDrawer = ({ navigation }) => {
+//Function to render search icon in right side header on home page.
+const Searchbar = ({ navigation }) => {
     return (
-        <TouchableOpacity onPress={navigation.openDrawer}>
+        <TouchableOpacity onPress={() => navigation.navigate('Search')}>
             <View>
                 <Icon style={styles.menuIcon}
-                    name="menu"
+                    name="search"
                 />
             </View>
         </TouchableOpacity>
@@ -16,10 +16,11 @@ const ToggleDrawer = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     menuIcon: {
-        margin: 10,
+        marginHorizontal: 20,
+        marginVertical: 10,
         fontSize: 25,
         color: '#fafafa',
     }
 });
 
-export default ToggleDrawer;
+export default Searchbar;
