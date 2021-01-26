@@ -12,6 +12,11 @@ Requirements:
 * [react-native-cli](https://www.npmjs.com/package/react-native-cli)
 * [Node.js v10+](http://nodejs.org/)
 
+Download Link
+===
+User Can Download the app from following [link](https://github.com/luvgadhvi/Poke-Guide/releases/download/v2/app-universal-release.apk). 
+
+
 Installation
 ===
 
