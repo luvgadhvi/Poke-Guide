@@ -14,7 +14,7 @@ Requirements:
 
 Download Link
 ===
-User Can Download the app from following [link](https://github.com/luvgadhvi/Poke-Guide/releases/download/v2/app-universal-release.apk). 
+User Can Download the app from following [link](https://play.google.com/store/apps/details?id=com.luv.pokedex). 
 
 
 Installation
